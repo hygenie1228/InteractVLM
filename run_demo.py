@@ -460,6 +460,7 @@ def main(args):
                     gender='neutral'
                 )
             else:
+                #### nhj warn
                 np.savez(f'{vertices_save_dir}/{fname_base}_oafford_vertices.npz', pred_contact_3d=pred_contact_3d.cpu())
                 
                 # Process object mesh with contact vertices for ocontact/oafford

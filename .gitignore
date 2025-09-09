@@ -5,3 +5,5 @@ debug/
 data/
 output/
 optim_data/
+data
+trained_models
