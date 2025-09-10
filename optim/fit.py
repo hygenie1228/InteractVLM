@@ -217,7 +217,7 @@ def main(input_path: Path, opt: EasierDict):
     # optimizer with separate learning rates for each parameter
     parameter_list = [
         {"params": [model.rotation], "lr": 5.0e-2},
-        {"params": [model.translation], "lr": 1.0e-2},
+        {"params": [model.translation], "lr": 1.0e-2}
     ]
     # if opt.en_scale_loss:
     if "scale" in opt.vars:
@@ -245,7 +245,7 @@ def main(input_path: Path, opt: EasierDict):
             lossless=False,
         )
 
-    try:
+    if True:
         pbar = tqdm(range(opt.max_iter))
         prev_loss = 1e10
         for i in pbar:
@@ -299,20 +299,22 @@ def main(input_path: Path, opt: EasierDict):
 
         end_time = human_readable_time(time.time() - start_time)
         logging.info(f"Total runtime {end_time}" + " with logging" if opt.log_video else "")
-    except Exception:
-        traceback.print_exc()
-        if (output_dir / "video.mp4").exists():
-            (output_dir / "video.mp4").unlink()
-    finally:
-        # * Final result logging
-        phong_renderer.save_mesh_as_obj(
-            model.human_vertices,
-            output["object_vertices"],
-            output_dir / "final.obj",
-            separate=True,
-        )
-        if opt.log_video:
-            vwriter.close()
+    else:
+        pass
+    # except Exception:
+    #     traceback.print_exc()
+    #     if (output_dir / "video.mp4").exists():
+    #         (output_dir / "video.mp4").unlink()
+    # finally:
+    #     # * Final result logging
+    #     phong_renderer.save_mesh_as_obj(
+    #         model.human_vertices,
+    #         output["object_vertices"],
+    #         output_dir / "final.obj",
+    #         separate=True,
+    #     )
+    #     if opt.log_video:
+    #         vwriter.close()
 
 
 if __name__ == "__main__":

@@ -1,3 +1,5 @@
 bash scripts/run_demo.sh hcontact data/demo_samples folder
 bash scripts/run_demo.sh oafford data/open3dhoi_p1 folder
-python -m optim.fit --input_path optim_data/tennis_racket__000000041045.jpg --cfg optim/cfg/fit.yaml 
+python -m optim.fit --input_path data/open3dhoi_p1_new/Gallus_gallus-chasing_50/Gallus_gallus-chasing_50.jpgZZ --cfg optim/cfg/fit.yaml 
+
+python -m optim.fit --input_path data/optim_data/tennis_racket__000000041045.jpg --cfg optim/cfg/fit.yaml 

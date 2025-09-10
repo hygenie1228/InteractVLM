@@ -163,7 +163,8 @@ def load_params(
         cv2.imwrite(join(root_folder, "human_mask.png"), human_mask * 255)
 
     # * Load camera parameters
-    foc_osx, princpt = get_camera_params_torch(human_npz["bbox_2"][0])
+    # foc_osx, princpt = get_camera_params_torch(human_npz["bbox_2"][0])
+    foc_osx, princpt = torch.tensor(human_npz["focal"]).float().cuda(), torch.tensor(human_npz["princpt"]).float().cuda()
 
     foc = foc_osx.clone()
     camera_params = CameraParams(focal_length=foc, principal_point=princpt)
@@ -172,9 +173,9 @@ def load_params(
     # Rescale the mesh to fit the new focal length
     human_mesh = trimesh.Trimesh(vertices=hum_vertices.cpu(), faces=faces, process=False)
     # save the centroid offset
-    centroid_offset = human_mesh.centroid
+    centroid_offset = human_mesh.centroid * 0.0
     # center the mesh
-    human_mesh.apply_translation(-centroid_offset)
+    # human_mesh.apply_translation(-centroid_offset)
     human_params = HumanParams(
         vertices=human_mesh.vertices,
         faces=faces,
@@ -190,8 +191,8 @@ def load_params(
     obj_mesh = trimesh.load(object_mesh_file, process=False)
     # center the mesh
     obj_mesh.apply_translation(-obj_mesh.centroid)
-    obj_mesh.vertices[:, 1] *= -1
-    obj_mesh.vertices[:, 2] *= -1
+    # obj_mesh.vertices[:, 1] *= -1
+    # obj_mesh.vertices[:, 2] *= -1
 
     detection = json.load(open(object_detection_file, "r"))
 

@@ -22,7 +22,7 @@ init:
 # * Optim
 optim_name: adam                    # * adam, sgd
 max_iter: 250                       # * Max iterations for optimization
-vars: [pose]                        # * Choose from: pose, scale
+vars: [pose, scale]                        # * Choose from: pose, scale
 
 # * Losses
 en_scale_loss: False
