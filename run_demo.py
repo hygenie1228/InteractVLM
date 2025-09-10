@@ -298,6 +298,14 @@ def main(args):
 
     for prompt, llava_image_path, sam_image_path, overlay_sam_path, lift2d_dict_path in \
                             zip(prompts, llava_image_paths, sam_image_paths, overlay_sam_paths, lift2d_dict_paths): 
+        # Skip
+        if args.input_mode == "folder":  vertices_save_dir = os.path.dirname(llava_image_path)
+        else: vertices_save_dir = args.vis_save_path
+        fname_base = llava_image_path.split("/")[-1].split(".")[0]
+
+        if os.path.isfile(f'{vertices_save_dir}/{fname_base}_oafford_vertices.npz'):
+            continue
+
 
         # Set output path based on input mode and contact type
         if args.input_mode == "folder":
