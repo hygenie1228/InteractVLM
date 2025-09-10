@@ -254,6 +254,16 @@ def main(input_path: Path, opt: EasierDict):
             loss.backward()
             optimizer.step()
 
+            if i == opt.max_iter - 1:
+                import trimesh
+                sample = str(input_path).split('/')[-2]
+                obj_mesh = trimesh.load(f"data/open3dhoi_p1_new/{sample}/object_mesh.obj")
+                obj_mesh.vertices =  output['object_vertices'].detach().cpu().numpy()
+                hum_mesh = trimesh.Trimesh(output['human_vertices'].detach().cpu().numpy(), model.human_faces.detach().cpu().numpy())
+                
+                hum_mesh.export(f"{output_dir}/human_mesh.obj")
+                obj_mesh.export(f"{output_dir}/object_mesh.obj")
+
             loss_diff = prev_loss - loss.item()
             pbar_str = f"(prev-curr)x10^4: {loss_diff * 1.0e4:.4f}{pbar_str}"
 

@@ -156,6 +156,7 @@ class ObjPose_Opt(nn.Module):
         output = {
             "hardP_render": hardP_render[0],
             "hardP_render_overlay": hardP_render_overlay[0, ..., :3],
+            "human_vertices": self.human_vertices.detach(),
             "object_vertices": obj_vertices.detach(),
             "current_mask": current_mask,
             "current_mask_centroid": current_mask_centroid,
