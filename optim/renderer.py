@@ -88,13 +88,16 @@ class SSRenderer(P3DRenderer):
 
         # * Render depth image
         depth = self.rasterizer(meshes).zbuf[..., [0]]
-        valid_pixels = depth != -1
-        valid_depth = depth[valid_pixels]
-        # * Normalize valid depth values
-        normalized_valid_depth = (valid_depth - valid_depth.min()) / (
-            valid_depth.max() - valid_depth.min()
-        )
-        depth[valid_pixels] = normalized_valid_depth
+        try:
+            valid_pixels = depth != -1
+            valid_depth = depth[valid_pixels]
+            # * Normalize valid depth values
+            normalized_valid_depth = (valid_depth - valid_depth.min()) / (
+                valid_depth.max() - valid_depth.min()
+            )
+            depth[valid_pixels] = normalized_valid_depth
+        except:
+            pass
 
         # * Render silhouette image
         silhouette_image = self.renderer(meshes)

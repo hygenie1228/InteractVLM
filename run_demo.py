@@ -306,7 +306,6 @@ def main(args):
         if os.path.isfile(f'{vertices_save_dir}/{fname_base}_oafford_vertices.npz'):
             continue
 
-
         # Set output path based on input mode and contact type
         if args.input_mode == "folder":
             args.vis_save_path = os.path.dirname(llava_image_path) + '/contact_output'
@@ -399,6 +398,8 @@ def main(args):
             tokenizer=tokenizer,
         )
         output_ids, pred_masks = output["output_ids"], output["pred_masks"]
+
+        import pdb; pdb.set_trace()
 
         # Handle 2D contact output
         if 'h2dcontact' in args.contact_type:

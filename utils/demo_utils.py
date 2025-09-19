@@ -183,8 +183,12 @@ def generate_sam_inp_objs(obj_mesh_f):
     
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     
-    try:
-        vertices, faces, aux = load_obj(obj_mesh_f)
+    if True:
+        # vertices, faces, aux = load_obj(obj_mesh_f)
+        tm = trimesh.load(obj_mesh_f, process=False) 
+        verts = torch.from_numpy(np.asarray(tm.vertices)).float()
+        faces = torch.from_numpy(np.asarray(tm.faces, dtype=np.int64))
+
         faces = faces.verts_idx
         vertices = normalize_mesh(vertices)
         
@@ -247,11 +251,13 @@ def generate_sam_inp_objs(obj_mesh_f):
         jl.dump(lifting_dict, os.path.join(sam_inp_objs, 'lift2d_dict.pkl'))
         
         print(f'Successfully generated sam_inp_objs at {sam_inp_objs}')
-        
-    except Exception as e:
-        print(f'Error generating sam_inp_objs for {obj_mesh_f}: {str(e)}')
-        # Clean up partial results
-        if os.path.exists(sam_inp_objs):
-            import shutil
-            shutil.rmtree(sam_inp_objs)
-        raise e
+    else:
+        pass
+      
+    # except Exception as e:
+    #     print(f'Error generating sam_inp_objs for {obj_mesh_f}: {str(e)}')
+    #     # Clean up partial results
+    #     if os.path.exists(sam_inp_objs):
+    #         import shutil
+    #         shutil.rmtree(sam_inp_objs)
+    #     raise e

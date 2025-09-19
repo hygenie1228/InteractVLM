@@ -14,6 +14,7 @@ import torch.nn.functional as F
 import yaml
 from pytorch3d.structures import Pointclouds
 from tqdm import tqdm
+import trimesh
 
 from .data_io import load_image, load_params
 from .icp import ICP, SimilarityTransform
@@ -140,7 +141,11 @@ def main(input_path: Path, opt: EasierDict):
         if icp_opt.filter_contacts[0]:
             # * Filter out points based on normals direction
             h_contact_normals = F.normalize(-h_norms[h_contact_mask], p=2, dim=-1)
-            o_contact_normals = F.normalize(o_norms[o_contact_mask], p=2, dim=-1)
+            try:
+                o_contact_normals = F.normalize(o_norms[o_contact_mask], p=2, dim=-1)
+            except:
+                with open("tmp2.txt", "a") as f:
+                    f.write(f"{str(input_path.parent).split('/')[-1]}\n")
             cosine_threshold = torch.cos(
                 torch.deg2rad(
                     torch.tensor(icp_opt.filter_contacts[1], dtype=torch.float32),
@@ -254,8 +259,7 @@ def main(input_path: Path, opt: EasierDict):
             loss.backward()
             optimizer.step()
 
-            if i == opt.max_iter - 1:
-                import trimesh
+            if i % 50 == 1:
                 sample = str(input_path).split('/')[-2]
                 obj_mesh = trimesh.load(f"data/open3dhoi_p1_new/{sample}/object_mesh.obj")
                 obj_mesh.vertices =  output['object_vertices'].detach().cpu().numpy()
@@ -263,6 +267,7 @@ def main(input_path: Path, opt: EasierDict):
                 
                 hum_mesh.export(f"{output_dir}/human_mesh.obj")
                 obj_mesh.export(f"{output_dir}/object_mesh.obj")
+
 
             loss_diff = prev_loss - loss.item()
             pbar_str = f"(prev-curr)x10^4: {loss_diff * 1.0e4:.4f}{pbar_str}"
@@ -311,6 +316,15 @@ def main(input_path: Path, opt: EasierDict):
         logging.info(f"Total runtime {end_time}" + " with logging" if opt.log_video else "")
     else:
         pass
+
+    sample = str(input_path).split('/')[-2]
+    obj_mesh = trimesh.load(f"data/open3dhoi_p1_new/{sample}/object_mesh.obj")
+    obj_mesh.vertices =  output['object_vertices'].detach().cpu().numpy()
+    hum_mesh = trimesh.Trimesh(output['human_vertices'].detach().cpu().numpy(), model.human_faces.detach().cpu().numpy())
+    
+    hum_mesh.export(f"{output_dir}/human_mesh.obj")
+    obj_mesh.export(f"{output_dir}/object_mesh.obj")
+
     # except Exception:
     #     traceback.print_exc()
     #     if (output_dir / "video.mp4").exists():
